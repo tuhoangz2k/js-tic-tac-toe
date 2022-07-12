@@ -15,7 +15,7 @@ let isGameEnded = false;
 let gameStatus =GAME_STATUS.PLAYING
 let cellValues = new Array(9).fill("");
 
-function toggleTurn(cell) {
+function toggleTurn() {
     // toggle turn
     currentTurn=currentTurn==='cross'?TURN.CIRCLE:TURN.CROSS;
     // update turn on DOM element
@@ -45,6 +45,44 @@ function highlightWinCells(winPositions){
     })
 }
 
+
+function hideReplayButton(){
+    const showReplayButton=getReplayButtonElement()
+    showReplayButton.classList.remove('show')
+}
+
+function resetGame() {
+// reset global vars
+ currentTurn = TURN.CROSS;
+ gameStatus =GAME_STATUS.PLAYING
+ cellValues = cellValues.map(()=>'');
+// reset dom elements
+
+// reset game state
+updateGameState(GAME_STATUS.PLAYING)
+// reset current turn 
+const currentTurnElement = getCurrentTurnElement()
+if(currentTurnElement){
+    currentTurnElement.classList.remove(TURN.CIRCLE,TURN.CROSS)
+        currentTurnElement.classList.add(TURN.CROSS)
+    
+}
+// reset game board
+const cellElementList=getCellElementList()
+for (const cellElement of cellElementList){
+    cellElement.classList.remove(TURN.CIRCLE,TURN.CROSS,'win')
+}
+// hide replay button
+hideReplayButton()
+}
+
+function initReplayButton() {
+    const replayButton=getReplayButtonElement()
+    if(replayButton){
+        replayButton.addEventListener('click',resetGame)
+    }
+}
+
 function handleCellClick(cell,index){
     const isClicked=cell.classList.contains(TURN.CIRCLE)||cell.classList.contains(TURN.CROSS)
     const isEndGame=gameStatus!==GAME_STATUS.PLAYING
@@ -63,7 +101,7 @@ function handleCellClick(cell,index){
     switch(game.status){
         case GAME_STATUS.ENDED:{
             // update game status
-            updateGameState()
+            updateGameState(game.status)
             // show replay button
             showReplayButton()
             break}
@@ -71,7 +109,7 @@ function handleCellClick(cell,index){
         case GAME_STATUS.X_WIN:
         case GAME_STATUS.O_WIN:{
          // update game status
-         updateGameState()
+         updateGameState(game.status)
          // show replay button
          showReplayButton()
 //      highlight win cells
@@ -109,5 +147,6 @@ function initCellElementList() {
 (()=>{
     // bind click event for all li elements
     initCellElementList()
+    initReplayButton()
     // bind click event for replay button
 })()
