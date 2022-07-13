@@ -18,3 +18,6 @@ export function getGameStatusElement() {
 export function getReplayButtonElement() {
     return document.querySelector('#replayGame')
 }
+export function getCellList() {
+    return document.querySelector('#cellList')
+}
